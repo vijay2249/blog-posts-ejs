@@ -2,6 +2,7 @@
 
 const express = require("express");
 const bodyParser = require("body-parser");
+const _ = require('lodash')
 const ejs = require("ejs");
 
 const app = express();
@@ -50,10 +51,8 @@ app.get('/posts', (request, response)=>{
 })
 
 app.get("/posts/:postTitle", (request, response)=>{
-  let postTitle = request.params.postTitle
-  console.log(postTitle);
-  let post = parsingData.posts.filter(post => postTitle === post.title)
-  console.log(post);
+  let postTitle = _.lowerCase(request.params.postTitle)
+  let post = parsingData.posts.filter(post => postTitle === _.lowerCase(post.title))
   if(post.length === 0)response.render('404')
   else response.render('post', {data: post})
 })
