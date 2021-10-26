@@ -1,5 +1,3 @@
-//jshint esversion:6
-
 const express = require("express");
 const bodyParser = require("body-parser");
 const _ = require('lodash')
@@ -60,6 +58,6 @@ app.get("/posts/:postTitle", (request, response)=>{
 
 
 
-app.listen(3000, function() {
-  console.log("Server started on port 3000");
+app.listen(process.env.PORT || 3000, function() {
+  console.log(`Server started on port ${process.env.PORT || 3000}`);
 });

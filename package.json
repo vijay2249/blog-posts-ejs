@@ -1,6 +1,6 @@
 {
   "name": "ejs-work",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
   "main": "app.js",
   "scripts": {
@@ -17,5 +17,8 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.14"
+  },
+  "engines": {
+    "node": "16.11.0"
   }
 }
