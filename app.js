@@ -20,7 +20,12 @@ const parsingData = {
 }
 
 app.get("/", (request,response)=>{
+  console.log("hello")
   response.render("home", {startContent: homeStartingContent, data: parsingData})
+})
+
+app.get("/favicon.ico", (request, response)=>{
+  console.log("favicon request");
 })
 
 app.get("/about", (request,response)=>{
