@@ -2,16 +2,17 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const _ = require('lodash')
 const ejs = require("ejs");
+const mongoose = require('mongoose')
 
 const app = express();
 
 app.set('view engine', 'ejs');
-
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
+mongoose.connect(`mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@${process.env.CLUSTER_CODE}.mongodb.net/${process.env.DATABASE_NAME}`)
 
 const homeStartingContent = "home page content";
-const aboutContent = " about page content";
+const aboutContent = "about page content";
 const contactContent = "contact page content";
 
 const parsingData = {
@@ -54,9 +55,6 @@ app.get("/posts/:postTitle", (request, response)=>{
   if(post.length === 0)response.render('404')
   else response.render('post', {data: post})
 })
-
-
-
 
 app.listen(process.env.PORT || 3000, function() {
   console.log(`Server started on port ${process.env.PORT || 3000}`);
