@@ -11,6 +11,15 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 mongoose.connect(`mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@${process.env.CLUSTER_CODE}.mongodb.net/${process.env.DATABASE_NAME}`)
 
+const homeStartingContent = "home page content";
+const aboutContent = "about page content";
+const contactContent = "contact page content";
+
+const parsingData = {
+  startContent: '',
+  posts: []
+}
+
 const postSchema = {
   title: {
     type: String,
@@ -23,16 +32,6 @@ const postSchema = {
 }
 
 const blogPostModel = mongoose.model("blog", postSchema)
-
-
-const homeStartingContent = "home page content";
-const aboutContent = "about page content";
-const contactContent = "contact page content";
-
-const parsingData = {
-  startContent: '',
-  posts: []
-}
 
 app.get("/", async (request,response)=>{
   await blogPostModel.find({}, async (err, result)=>{
@@ -47,25 +46,28 @@ app.get("/", async (request,response)=>{
   }).clone()
 })
 
+app.get("/compose", (request, response)=>{
+  response.render("compose")
+})
+
+app.post("/compose", async (request, response)=>{
+  new_title = request.body.title
+  new_content = request.body.content
+  try{
+    await new blogPostModel({title: new_title, content: new_content}).save()
+    response.redirect("/")
+  }catch(err){
+    console.log(err);
+    response.redirect("/compose")
+  }
+})
+
 app.get("/about", (request,response)=>{
   response.render("about", {startContent: aboutContent})
 })
 
 app.get("/contact", (request,response)=>{
   response.render("contact", {startContent: contactContent})
-})
-
-app.get("/compose", (request, response)=>{
-  response.render("compose")
-})
-
-app.post("/compose", (request, response)=>{
-  let new_post = {
-    title: request.body.title,
-    content: request.body.content
-  }
-  parsingData.posts.push(new_post)
-  response.redirect("/")
 })
 
 app.get('/posts', (request, response)=>{
