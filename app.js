@@ -9,16 +9,8 @@ const app = express();
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
+
 mongoose.connect(`mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@${process.env.CLUSTER_CODE}.mongodb.net/${process.env.DATABASE_NAME}`)
-
-const homeStartingContent = "home page content";
-const aboutContent = "about page content";
-const contactContent = "contact page content";
-
-const parsingData = {
-  startContent: '',
-  posts: []
-}
 
 const postSchema = {
   title: {
@@ -32,6 +24,15 @@ const postSchema = {
 }
 
 const blogPostModel = mongoose.model("blog", postSchema)
+
+const homeStartingContent = "home page content";
+const aboutContent = "about page content";
+const contactContent = "contact page content";
+
+const parsingData = {
+  startContent: '',
+  posts: []
+}
 
 app.get("/", async (request,response)=>{
   await blogPostModel.find({}, async (err, result)=>{
@@ -70,15 +71,16 @@ app.get("/contact", (request,response)=>{
   response.render("contact", {startContent: contactContent})
 })
 
-app.get('/posts', (request, response)=>{
-  response.render("post", {data:parsingData})
-})
-
-app.get("/posts/:postTitle", (request, response)=>{
-  let postTitle = _.lowerCase(request.params.postTitle)
-  let post = parsingData.posts.filter(post => postTitle === _.lowerCase(post.title))
-  if(post.length === 0)response.render('404')
-  else response.render('post', {data: post})
+app.get("/posts/:postId", async (request, response)=>{
+  let postId = request.params.postId
+  await blogPostModel.findOne({_id: postId}, async (err, result)=>{
+    if(err){
+      console.log(err);
+      response.render("404")
+    }else{
+      response.render("post", {data: result})
+    }
+  }).clone()
 })
 
 app.listen(process.env.PORT || 3000, function() {
