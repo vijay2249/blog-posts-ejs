@@ -11,6 +11,20 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 mongoose.connect(`mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@${process.env.CLUSTER_CODE}.mongodb.net/${process.env.DATABASE_NAME}`)
 
+const postSchema = {
+  title: {
+    type: String,
+    required: [true, "Title is Required"]
+  },
+  content: {
+    type: String,
+    required: [true, "Content is Required"]
+  }
+}
+
+const blogPostModel = mongoose.model("blog", postSchema)
+
+
 const homeStartingContent = "home page content";
 const aboutContent = "about page content";
 const contactContent = "contact page content";
@@ -20,8 +34,17 @@ const parsingData = {
   posts: []
 }
 
-app.get("/", (request,response)=>{
-  response.render("home", {startContent: homeStartingContent, data: parsingData})
+app.get("/", async (request,response)=>{
+  await blogPostModel.find({}, async (err, result)=>{
+    if(err){
+      console.log(err);
+      response.render("404");
+    }else{
+      parsingData.startContent = homeStartingContent
+      parsingData.posts = result
+      response.render("home", {data: parsingData})
+    }
+  }).clone()
 })
 
 app.get("/about", (request,response)=>{

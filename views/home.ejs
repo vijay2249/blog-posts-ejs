@@ -1,6 +1,6 @@
 <%- include('partials/header') %>
   <h1>Welcome to Home page</h1>
-  <p><%= startContent %></p>
+  <p><%= data.startContent %></p>
 
   <% data.posts.forEach(post =>{ %>
     <h2><%= post.title %></h2>
