@@ -37,8 +37,7 @@ const parsingData = {
 app.get("/", async (request,response)=>{
   await blogPostModel.find({}, async (err, result)=>{
     if(err){
-      console.log(err);
-      response.render("404");
+      response.render("404", {message: "Server busy try again later"});
     }else{
       parsingData.startContent = homeStartingContent
       parsingData.posts = result
@@ -47,21 +46,40 @@ app.get("/", async (request,response)=>{
   }).clone()
 })
 
-app.get("/compose", (request, response)=>{
-  response.render("compose")
-})
+// app.get("/compose", (request, response)=>{
+//   response.render("compose")
+// })
 
-app.post("/compose", async (request, response)=>{
-  new_title = request.body.title
-  new_content = request.body.content
-  try{
-    await new blogPostModel({title: new_title, content: new_content}).save()
-    response.redirect("/")
-  }catch(err){
-    console.log(err);
-    response.redirect("/compose")
-  }
-})
+// app.post("/compose", async (request, response)=>{
+//   new_title = request.body.title
+//   new_content = request.body.content
+//   try{
+//     await new blogPostModel({title: new_title, content: new_content}).save()
+//     response.redirect("/")
+//   }catch(err){
+//     console.log(err);
+//     response.redirect("/compose")
+//   }
+// })
+
+app.route("/compose")
+  .get((request, response)=>{
+    response.render("compose")
+  })
+  .post(async (request, response)=>{
+    const new_title = request.body.title
+    const new_content = request.body.content
+    if(new_title === '' || new_content === ''){
+      response.render("404", {message: "validation failed try again"})
+    }
+    else{
+      await new blogPostModel({title: new_title, content: new_content}).save(function(err){
+        if(err){
+          response.render("404", {message: "validation failed"})
+        }else response .redirect("/")
+      })
+    }
+  })
 
 app.get("/about", (request,response)=>{
   response.render("about", {startContent: aboutContent})
@@ -75,7 +93,7 @@ app.get("/posts/:postId", async (request, response)=>{
   let postId = request.params.postId
   await blogPostModel.findOne({_id: postId}, async (err, result)=>{
     if(err){
-      console.log(err);
+      // console.log(err);
       response.render("404")
     }else{
       response.render("post", {data: result})

@@ -1,6 +1,10 @@
 <%- include('partials/header') %>
 
-  <h2><%= data.title %></h2>
+<div class="edit-delete">
+    <h2><%= data.title %></h2>
+    <button type="submit" name="change" value="delete">Edit</button>
+    <button type="submit" name="change" value="edit">Delete</button>
+  </div>
   <p><%= data.content %></p>
  
 <%- include('partials/footer') %>

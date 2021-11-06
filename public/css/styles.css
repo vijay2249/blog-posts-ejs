@@ -47,3 +47,17 @@
     color: #5e80f7;
     text-decoration: none;
 }
+
+.edit-delete{
+    display: flex;
+    height: 100%;
+    flex-direction: row;
+}
+
+.edit-delete > button {
+    height: 20px;
+    width: max-content;
+    margin: 5px;
+    height: 50%;
+    margin-top: 5px;
+}
