@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const _ = require('lodash')
@@ -10,7 +11,14 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-mongoose.connect(`mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@${process.env.CLUSTER_CODE}.mongodb.net/${process.env.DATABASE_NAME}`)
+// mongoDB connection using env and dotenv module
+try{
+  mongoose.connect(`mongodb+srv://${process.env.USER}:${process.env.PASSWORD}@${process.env.CLUSTER_CODE}.mongodb.net/${process.env.DATABASE_NAME}`)
+  console.log("Connection to mongoDB success");
+}catch(err){
+  console.log("Connection to mongoDB database Failed");
+  console.log(err);
+}
 
 const postSchema = {
   title: {
